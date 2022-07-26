@@ -16,7 +16,18 @@ end
 
 ## Usage
 
-TODO
+```elixir
+url = "https://api.spacex.land/graphql/"
+
+# List SpaceX launches
+GQL.query("query Launches { launches { id } }", url: url)
+
+# Get SpaceX launch by ID
+GQL.query("query Launch($launch_id: ID!) { launch(id: $launch_id) { details } }",
+  url: url,
+  variables: [launch_id: "9"]
+)
+```
 
 ## Fragments
 
