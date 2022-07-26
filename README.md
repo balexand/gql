@@ -29,6 +29,8 @@ GQL.query("query Launch($launch_id: ID!) { launch(id: $launch_id) { details } }"
 )
 ```
 
+FIXME link to module docs here and in badge
+
 ## Fragments
 
 This library does not support GraphQL fragments. I'm open to pull-requests but this is not something that is a priority to me.

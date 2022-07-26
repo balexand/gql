@@ -1,6 +1,6 @@
 defmodule GQL do
   @moduledoc """
-  Documentation for `GQL`.
+  Simple GraphQL client.
   """
 
   @query_opts_validation [
@@ -11,14 +11,35 @@ defmodule GQL do
     ],
     url: [
       type: :string,
-      required: true
+      required: true,
+      doc: "URL to which the request is made."
     ]
   ]
 
   @doc """
-  Queries a GraphQL endpoint.
+  Like `query/2`, except raises `GQL.GraphQLError` if the server returns errors.
+  """
+  def query!(_query, _opts \\ []) do
+    # FIXME
+  end
+
+  @doc """
+  Queries a GraphQL endpoint. Returns `{:ok, body, headers}` upon success or `{:error, body,
+  headers}` if the response contains an "errors" key.
+
+  An exception will be raised for exceptional errors:
+
+  * `GQL.ConnectionError` if the HTTP client returns a connection error such as a timeout.
+  * `GQL.ServerError` if the server responded with a 5xx code.
+
+  ## Options
+
+  #{NimbleOptions.docs(@query_opts_validation)}
   """
   def query(query, opts \\ []) do
+    # FIXME http_options
+    # FIXME exception types
+
     {finch_mod, opts} = Keyword.pop(opts, :finch_mod, Finch)
 
     opts = NimbleOptions.validate!(opts, @query_opts_validation)
@@ -35,6 +56,9 @@ defmodule GQL do
   end
 
   defp handle_body(%{"errors" => _} = body, headers) do
+    # Return error if response body contains errors. In this case the HTTP status is inconsistent
+    # between different APIs. Github and SpaceX return errors with HTTP 200 status. Shopify
+    # returns errors with HTTP 400 status.
     {:error, body, headers}
   end
 
