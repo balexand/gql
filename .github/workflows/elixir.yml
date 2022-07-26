@@ -9,8 +9,11 @@ jobs:
 
     strategy:
       matrix:
-        elixir-version: ["1.12", "1.13"]
+        elixir-version: ["1.13"]
         otp-version: ["23", "24", "25"]
+        include:
+          - elixir-version: "1.12"
+            otp-version: "24"
 
     steps:
       - uses: actions/checkout@v2
