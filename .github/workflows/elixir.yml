@@ -53,4 +53,4 @@ jobs:
       - name: Compile
         run: MIX_ENV=test mix compile --warnings-as-errors
       - name: Run tests
-        run: mix test --include integration --warnings-as-errors
+        run: mix test --only integration --warnings-as-errors
