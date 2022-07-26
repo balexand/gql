@@ -1,4 +1,4 @@
-defmodule Gql.Application do
+defmodule GQL.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,13 +8,12 @@ defmodule Gql.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Gql.Worker.start_link(arg)
-      # {Gql.Worker, arg}
+      {Finch, name: GQL.Finch}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Gql.Supervisor]
+    opts = [strategy: :one_for_one, name: GQL.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
