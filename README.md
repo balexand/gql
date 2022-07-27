@@ -1,5 +1,7 @@
 # GQL
 
+[![Package](https://img.shields.io/badge/-Package-important)](https://hex.pm/packages/gql) [![Documentation](https://img.shields.io/badge/-Documentation-blueviolet)](https://hexdocs.pm/gql)
+
 Simple GraphQL client for Elixir.
 
 ## Installation
@@ -16,7 +18,20 @@ end
 
 ## Usage
 
-TODO
+```elixir
+url = "https://api.spacex.land/graphql/"
+
+# List SpaceX launches
+GQL.query("query Launches { launches { id } }", url: url)
+
+# Get SpaceX launch by ID
+GQL.query("query Launch($launch_id: ID!) { launch(id: $launch_id) { details } }",
+  url: url,
+  variables: [launch_id: "9"]
+)
+```
+
+See [`GQL` docs](https://hexdocs.pm/gql/GQL.html) for details.
 
 ## Fragments
 

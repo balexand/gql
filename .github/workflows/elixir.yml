@@ -9,8 +9,11 @@ jobs:
 
     strategy:
       matrix:
-        elixir-version: ["1.12", "1.13"]
+        elixir-version: ["1.13"]
         otp-version: ["23", "24", "25"]
+        include:
+          - elixir-version: "1.12"
+            otp-version: "24"
 
     steps:
       - uses: actions/checkout@v2
@@ -30,3 +33,24 @@ jobs:
         run: mix test --warnings-as-errors
       - name: Check format
         run: mix format --check-formatted
+
+  integration_test:
+    name: Integration test
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: "1.13"
+          otp-version: "25"
+
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile deps
+        run: MIX_ENV=test mix deps.compile
+      - name: Compile
+        run: MIX_ENV=test mix compile --warnings-as-errors
+      - name: Run tests
+        run: mix test --only integration --warnings-as-errors
