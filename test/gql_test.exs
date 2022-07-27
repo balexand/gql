@@ -32,16 +32,14 @@ defmodule GQLTest do
   }
 
   @expected_body %{
-    "data" => %{
-      "launches" => [
-        %{
-          "details" =>
-            "Second GTO launch for Falcon 9. The USAF evaluated launch data from this flight as part of a separate certification program for SpaceX to qualify to fly U.S. military payloads and found that the Thaicom 6 launch had \"unacceptable fuel reserves at engine cutoff of the stage 2 second burnoff\"",
-          "id" => "13"
-        },
-        %{"details" => nil, "id" => "17"}
-      ]
-    }
+    "launches" => [
+      %{
+        "details" =>
+          "Second GTO launch for Falcon 9. The USAF evaluated launch data from this flight as part of a separate certification program for SpaceX to qualify to fly U.S. military payloads and found that the Thaicom 6 launch had \"unacceptable fuel reserves at engine cutoff of the stage 2 second burnoff\"",
+        "id" => "13"
+      },
+      %{"details" => nil, "id" => "17"}
+    ]
   }
 
   import Mox, only: [verify_on_exit!: 1]
@@ -77,7 +75,7 @@ defmodule GQLTest do
       {:ok, @spacex_error_resp}
     end)
 
-    assert {:error, %{"errors" => [%{}]}, [_ | _]} =
+    assert {:error, [%{}], [_ | _]} =
              GQL.query(@spacex_launch_query, finch_mod: MockFinch, url: @url)
   end
 
@@ -114,7 +112,7 @@ defmodule GQLTest do
     end)
 
     assert_raise GQL.GraphQLError,
-                 "%GQL.GraphQLError{body: %{\"errors\" => [%{\"extensions\" => %{\"code\" => \"INTERNAL_SERVER_ERROR\"}, \"locations\" => [%{\"column\" => 14, \"line\" => 1}], \"message\" => \"Variable \\\"$launch_id\\\" of required type \\\"ID!\\\" was not provided.\"}]}}",
+                 "%GQL.GraphQLError{errors: [%{\"extensions\" => %{\"code\" => \"INTERNAL_SERVER_ERROR\"}, \"locations\" => [%{\"column\" => 14, \"line\" => 1}], \"message\" => \"Variable \\\"$launch_id\\\" of required type \\\"ID!\\\" was not provided.\"}]}",
                  fn ->
                    GQL.query!(@spacex_launch_query, finch_mod: MockFinch, url: @url)
                  end

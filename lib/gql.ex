@@ -21,7 +21,7 @@ defmodule GQL do
     Error raised when response contains GraphQL errors.
     """
 
-    defexception [:body]
+    defexception [:errors]
 
     def message(exception), do: inspect(exception)
   end
@@ -64,13 +64,13 @@ defmodule GQL do
   """
   def query!(query, opts) do
     case query(query, opts) do
-      {:ok, body, headers} -> {body, headers}
-      {:error, body, _headers} -> raise %GraphQLError{body: body}
+      {:ok, data, headers} -> {data, headers}
+      {:error, errors, _headers} -> raise %GraphQLError{errors: errors}
     end
   end
 
   @doc """
-  Queries a GraphQL endpoint. Returns `{:ok, body, headers}` upon success or `{:error, body,
+  Queries a GraphQL endpoint. Returns `{:ok, data, headers}` upon success or `{:error, errors,
   headers}` if the response contains an "errors" key.
 
   An exception will be raised for exceptional errors:
@@ -104,14 +104,14 @@ defmodule GQL do
     end
   end
 
-  defp handle_body(%{"errors" => _} = body, headers) do
+  defp handle_body(%{"errors" => errors}, headers) do
     # Return error if response body contains errors. In this case the HTTP status is inconsistent
     # between different APIs. Github and SpaceX return errors with HTTP 200 status. Shopify
     # returns errors with HTTP 400 status.
-    {:error, body, headers}
+    {:error, errors, headers}
   end
 
-  defp handle_body(%{} = body, headers) do
-    {:ok, body, headers}
+  defp handle_body(%{"data" => data}, headers) do
+    {:ok, data, headers}
   end
 end
