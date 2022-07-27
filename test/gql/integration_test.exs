@@ -50,6 +50,19 @@ defmodule GQL.IntegrationTest do
            }
   end
 
+  test "SpaceX timeout" do
+    exception =
+      assert_raise(GQL.ConnectionError, "%GQL.ConnectionError{reason: :timeout}", fn ->
+        GQL.query(@spacex_launch_query,
+          http_options: [receive_timeout: 1],
+          variables: [launch_id: "9"],
+          url: @spacex_url
+        )
+      end)
+
+    assert exception.reason == :timeout
+  end
+
   test "SpaceX get launch with missing id variable" do
     assert {:error, body, [_ | _]} = GQL.query(@spacex_launch_query, url: @spacex_url)
 

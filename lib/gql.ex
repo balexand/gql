@@ -3,7 +3,45 @@ defmodule GQL do
   Simple GraphQL client.
   """
 
+  defmodule ConnectionError do
+    @moduledoc """
+    Error raised when a connection error occurs. See `Mint.TransportError` for list of possible
+    values for the `reason` field.
+    """
+
+    defexception [:reason]
+
+    def message(exception) do
+      inspect(exception)
+    end
+  end
+
+  defmodule GraphQLError do
+    @moduledoc """
+    Error raised when response contains GraphQL errors.
+    """
+
+    defexception [:body]
+
+    def message(exception), do: inspect(exception)
+  end
+
+  defmodule ServerError do
+    @moduledoc """
+    Error raised when server returns 5xx HTTP status code.
+    """
+
+    defexception [:response, :status]
+
+    def message(exception), do: "Server responded with HTTP status: #{exception.status}"
+  end
+
   @query_opts_validation [
+    http_options: [
+      type: :keyword_list,
+      doc: "Options to be passed to `Finch.request/3`.",
+      default: [receive_timeout: 30_000]
+    ],
     variables: [
       type: :any,
       default: [],
@@ -19,8 +57,11 @@ defmodule GQL do
   @doc """
   Like `query/2`, except raises `GQL.GraphQLError` if the server returns errors.
   """
-  def query!(_query, _opts \\ []) do
-    # FIXME
+  def query!(query, opts) do
+    case query(query, opts) do
+      {:ok, body, headers} -> {body, headers}
+      {:error, body, _headers} -> raise %GraphQLError{body: body}
+    end
   end
 
   @doc """
@@ -36,10 +77,7 @@ defmodule GQL do
 
   #{NimbleOptions.docs(@query_opts_validation)}
   """
-  def query(query, opts \\ []) do
-    # FIXME http_options
-    # FIXME exception types
-
+  def query(query, opts) do
     {finch_mod, opts} = Keyword.pop(opts, :finch_mod, Finch)
 
     opts = NimbleOptions.validate!(opts, @query_opts_validation)
@@ -48,10 +86,16 @@ defmodule GQL do
     headers = [{"content-type", "application/json"}]
 
     Finch.build(:post, opts[:url], headers, Jason.encode!(body))
-    |> finch_mod.request(GQL.Finch, [])
+    |> finch_mod.request(GQL.Finch, opts[:http_options])
     |> case do
       {:ok, %Finch.Response{status: status} = resp} when status >= 200 and status < 500 ->
         handle_body(Jason.decode!(resp.body), resp.headers)
+
+      {:ok, %Finch.Response{} = resp} ->
+        raise %ServerError{response: resp, status: resp.status}
+
+      {:error, %Mint.TransportError{reason: reason}} ->
+        raise %ConnectionError{reason: reason}
     end
   end
 
