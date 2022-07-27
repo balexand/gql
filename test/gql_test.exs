@@ -48,12 +48,28 @@ defmodule GQLTest do
   setup :verify_on_exit!
 
   test "query" do
-    Mox.expect(MockFinch, :request, fn _, _, _ ->
+    Mox.expect(MockFinch, :request, fn req, GQL.Finch, [receive_timeout: 30000] ->
+      assert req == %Finch.Request{
+               body:
+                 "{\"query\":\"query Launch($launch_id: ID!) {\\n  launch(id: $launch_id) {\\n    id\\n    details\\n  }\\n}\\n\",\"variables\":{}}",
+               headers: [{"content-type", "application/json"}, {"X-Shopify-Access-Token", "🐓"}],
+               host: "example.com",
+               method: "POST",
+               path: "/graphql",
+               port: 443,
+               query: nil,
+               scheme: :https
+             }
+
       {:ok, @spacex_resp}
     end)
 
     assert {:ok, @expected_body, @headers} ==
-             GQL.query(@spacex_launch_query, finch_mod: MockFinch, url: @url)
+             GQL.query(@spacex_launch_query,
+               finch_mod: MockFinch,
+               headers: [{"X-Shopify-Access-Token", "🐓"}],
+               url: @url
+             )
   end
 
   test "query with GraphQL error" do
@@ -67,7 +83,7 @@ defmodule GQLTest do
 
   test "query without required opts" do
     assert_raise NimbleOptions.ValidationError,
-                 "required option :url not found, received options: [:variables, :http_options]",
+                 "required option :url not found, received options: [:variables, :http_options, :headers]",
                  fn ->
                    GQL.query(@spacex_launch_query, [])
                  end

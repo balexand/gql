@@ -37,6 +37,11 @@ defmodule GQL do
   end
 
   @query_opts_validation [
+    headers: [
+      type: {:list, :any},
+      default: [],
+      doc: "HTTP headers to include."
+    ],
     http_options: [
       type: :keyword_list,
       doc: "Options to be passed to `Finch.request/3`.",
@@ -83,7 +88,7 @@ defmodule GQL do
     opts = NimbleOptions.validate!(opts, @query_opts_validation)
 
     body = %{query: query, variables: Map.new(opts[:variables])}
-    headers = [{"content-type", "application/json"}]
+    headers = [{"content-type", "application/json"}] ++ opts[:headers]
 
     Finch.build(:post, opts[:url], headers, Jason.encode!(body))
     |> finch_mod.request(GQL.Finch, opts[:http_options])
