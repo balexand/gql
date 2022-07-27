@@ -70,7 +70,6 @@ defmodule GQL.IntegrationTest do
                "locations" => [%{"column" => 14, "line" => 1}],
                "message" => "Variable \"$launch_id\" of required type \"ID!\" was not provided."
              }
-           ] =
-             body
+           ] = body
   end
 end
