@@ -1,5 +1,7 @@
 # GQL
 
+[![Package](https://img.shields.io/badge/-Package-important)](https://hex.pm/packages/gql) [![Documentation](https://img.shields.io/badge/-Documentation-blueviolet)](https://hexdocs.pm/gql)
+
 Simple GraphQL client for Elixir.
 
 ## Installation
@@ -29,7 +31,7 @@ GQL.query("query Launch($launch_id: ID!) { launch(id: $launch_id) { details } }"
 )
 ```
 
-FIXME link to module docs here and in badge
+See [`GQL` docs](https://hexdocs.pm/gql/GQL.html) for details.
 
 ## Fragments
 
