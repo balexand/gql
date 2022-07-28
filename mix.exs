@@ -38,9 +38,9 @@ defmodule GQL.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:finch, "~> 0.12.0"},
+      {:finch, "~> 0.12"},
       {:jason, "~> 1.3"},
-      {:nimble_options, "~> 0.4.0"},
+      {:nimble_options, "~> 0.4"},
 
       # Dev/test
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
