@@ -37,6 +37,11 @@ defmodule GQL do
   end
 
   @query_opts_validation [
+    finch_mod: [
+      type: :atom,
+      default: Finch,
+      doc: false
+    ],
     headers: [
       type: {:list, :any},
       default: [],
@@ -83,15 +88,13 @@ defmodule GQL do
   #{NimbleOptions.docs(@query_opts_validation)}
   """
   def query(query, opts) do
-    {finch_mod, opts} = Keyword.pop(opts, :finch_mod, Finch)
-
     opts = NimbleOptions.validate!(opts, @query_opts_validation)
 
     body = %{query: query, variables: Map.new(opts[:variables])}
     headers = [{"content-type", "application/json"}] ++ opts[:headers]
 
     Finch.build(:post, opts[:url], headers, Jason.encode!(body))
-    |> finch_mod.request(GQL.Finch, opts[:http_options])
+    |> opts[:finch_mod].request(GQL.Finch, opts[:http_options])
     |> case do
       {:ok, %Finch.Response{status: status} = resp} when status >= 200 and status < 500 ->
         handle_body(Jason.decode!(resp.body), resp.headers)

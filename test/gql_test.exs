@@ -83,7 +83,7 @@ defmodule GQLTest do
 
   test "query without required opts" do
     assert_raise NimbleOptions.ValidationError,
-                 "required option :url not found, received options: [:variables, :http_options, :headers]",
+                 "required option :url not found, received options: [:variables, :http_options, :headers, :finch_mod]",
                  fn ->
                    GQL.query(@spacex_launch_query, [])
                  end
