@@ -3,6 +3,18 @@ defmodule GQL do
   Simple GraphQL client.
   """
 
+  defmodule Behaviour do
+    @moduledoc """
+    Behaviour that `GQL` implements.
+    """
+
+    @callback query!(String.t(), keyword()) :: {map(), Mint.Types.headers()}
+    @callback query(String.t(), keyword()) ::
+                {:ok, map(), Mint.Types.headers()} | {:error, map, Mint.Types.headers()}
+  end
+
+  @behaviour Behaviour
+
   defmodule ConnectionError do
     @moduledoc """
     Error raised when a connection error occurs. See `Mint.TransportError` for list of possible
@@ -67,6 +79,8 @@ defmodule GQL do
   @doc """
   Like `query/2`, except raises `GQL.GraphQLError` if the server returns errors.
   """
+  @impl true
+  @spec query!(String.t(), keyword()) :: {map(), Mint.Types.headers()}
   def query!(query, opts) do
     case query(query, opts) do
       {:ok, body, headers} -> {body, headers}
@@ -87,6 +101,9 @@ defmodule GQL do
 
   #{NimbleOptions.docs(@query_opts_validation)}
   """
+  @impl true
+  @spec query(String.t(), keyword()) ::
+          {:ok, map(), Mint.Types.headers()} | {:error, map, Mint.Types.headers()}
   def query(query, opts) do
     opts = NimbleOptions.validate!(opts, @query_opts_validation)
 
