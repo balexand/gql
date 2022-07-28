@@ -11,7 +11,7 @@ The package can be installed by adding `gql` to your list of dependencies in `mi
 ```elixir
 def deps do
   [
-    {:gql, "~> 0.5.0"}
+    {:gql, "~> 0.6.0"}
   ]
 end
 ```
