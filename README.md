@@ -1,6 +1,6 @@
 # GQL
 
-[![Package](https://img.shields.io/badge/-Package-important)](https://hex.pm/packages/gql) [![Documentation](https://img.shields.io/badge/-Documentation-blueviolet)](https://hexdocs.pm/gql)
+[![Package](https://img.shields.io/hexpm/v/gql.svg)](https://hex.pm/packages/gql) [![Documentation](http://img.shields.io/badge/hex.pm-docs-green.svg?style=flat)](https://hexdocs.pm/gql) ![CI](https://github.com/balexand/gql/actions/workflows/elixir.yml/badge.svg)
 
 Simple GraphQL client for Elixir.
 
