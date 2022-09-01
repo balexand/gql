@@ -28,7 +28,7 @@ jobs:
         path: |
           deps
           _build
-        key: dia-${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        key: dialyzer-${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
 
     - name: Install dependencies
       run: mix deps.get
