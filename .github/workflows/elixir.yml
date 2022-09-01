@@ -52,5 +52,5 @@ jobs:
         run: MIX_ENV=test mix deps.compile
       - name: Compile
         run: MIX_ENV=test mix compile --warnings-as-errors
-      - name: Run tests
-        run: mix test --only integration --warnings-as-errors
+      # - name: Run tests
+      #   run: mix test --only integration --warnings-as-errors
