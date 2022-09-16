@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-version: ["1.13"]
+        elixir-version: ["1.13", "1.14"]
         otp-version: ["23", "24", "25"]
         include:
           - elixir-version: "1.12"
