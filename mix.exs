@@ -40,7 +40,7 @@ defmodule GQL.MixProject do
     [
       {:finch, "~> 0.12"},
       {:jason, "~> 1.3"},
-      {:nimble_options, "~> 0.4"},
+      {:nimble_options, "~> 0.4 or ~> 1.0"},
 
       # Dev/test
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
