@@ -49,9 +49,8 @@ defmodule GQLTest do
 
   test "query" do
     Mox.expect(MockFinch, :request, fn req, GQL.Finch, [receive_timeout: 30000] ->
-      assert req == %Finch.Request{
-               body:
-                 "{\"query\":\"query Launch($launch_id: ID!) {\\n  launch(id: $launch_id) {\\n    id\\n    details\\n  }\\n}\\n\",\"variables\":{}}",
+      assert %Finch.Request{
+               body: body,
                headers: [{"content-type", "application/json"}, {"X-Shopify-Access-Token", "🐓"}],
                host: "example.com",
                method: "POST",
@@ -59,6 +58,12 @@ defmodule GQLTest do
                port: 443,
                query: nil,
                scheme: :https
+             } = req
+
+      assert Jason.decode!(body) == %{
+               "query" =>
+                 "query Launch($launch_id: ID!) {\n  launch(id: $launch_id) {\n    id\n    details\n  }\n}\n",
+               "variables" => %{}
              }
 
       {:ok, @spacex_resp}
